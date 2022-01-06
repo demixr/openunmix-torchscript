@@ -5,6 +5,7 @@ from openunmix import utils
 from openunmix import model
 from openunmix.model import OpenUnmix
 
+
 def umxl_spec(targets=None, device="cpu", pretrained=True):
 
     # set urls for weights
@@ -40,16 +41,16 @@ def umxl_spec(targets=None, device="cpu", pretrained=True):
         target_models[target] = target_unmix
     return target_models
 
+
 def main():
-    niter = 1
-    device = 'cpu'
+    device = "cpu"
 
     target_models = umxl_spec(device=device, pretrained=True)
 
     separator = (
         model.Separator(
             target_models=target_models,
-            niter=niter,
+            niter=1,
             residual=False,
             n_fft=4096,
             n_hop=1024,
@@ -61,9 +62,10 @@ def main():
         .to(device)
     )
 
-    ok = torch.jit.script(separator)
-    torchscript_model_opti = optimize_for_mobile(ok)
+    jit_script = torch.jit.script(separator)
+    torchscript_model_opti = optimize_for_mobile(jit_script)
     torchscript_model_opti._save_for_lite_interpreter("openunmix.ptl")
+
 
 if __name__ == "__main__":
     main()
