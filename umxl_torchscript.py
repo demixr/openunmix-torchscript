@@ -1,4 +1,5 @@
 import torch
+import os
 from torch.utils.mobile_optimizer import optimize_for_mobile
 
 from openunmix import utils
@@ -64,7 +65,11 @@ def main():
 
     jit_script = torch.jit.script(separator)
     torchscript_model_opti = optimize_for_mobile(jit_script)
-    torchscript_model_opti._save_for_lite_interpreter("openunmix.ptl")
+
+    if not os.path.exists("dist"):
+        os.mkdir("dist")
+
+    torchscript_model_opti._save_for_lite_interpreter("dist/umxl.ptl")
 
 
 if __name__ == "__main__":
