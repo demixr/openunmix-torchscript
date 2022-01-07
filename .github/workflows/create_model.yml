@@ -1,4 +1,4 @@
-name: Create model
+name: Create model and release
 on: push
 
 jobs:
@@ -20,5 +20,15 @@ jobs:
       - name: save artifacts
         uses: actions/upload-artifact@v2
         with:
-          name: model.ptl
+          name: umxl_model.ptl
           path: openunmix.ptl
+      - name: Create release
+        uses: Roang-zero1/github-create-release-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create GitHub release
+        uses: Roang-zero1/github-upload-release-artifacts-action@master
+        with:
+          args: openunmix.ptl
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
