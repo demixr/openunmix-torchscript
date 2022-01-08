@@ -20,7 +20,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Create pytorch mobile model
-        run: python umxl_torchscript.py
+        run: python openunmix_torchscript.py
       - name: Create release
         id: create_release
         uses: actions/create-release@v1
@@ -38,6 +38,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
-          asset_path: ./dist/umxl.ptl
-          asset_name: umxl.ptl
+          asset_path: ./dist/*.ptl
           asset_content_type: application/octet-stream
