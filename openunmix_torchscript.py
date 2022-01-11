@@ -6,7 +6,7 @@ from openunmix import utils
 from openunmix import model
 from openunmix.model import OpenUnmix
 
-target_urls_umx = {
+target_urls_umxhq = {
     "bass": "https://zenodo.org/api/files/1c8f83c5-33a5-4f59-b109-721fdd234875/bass-8d85a5bd.pth",
     "drums": "https://zenodo.org/api/files/1c8f83c5-33a5-4f59-b109-721fdd234875/drums-9619578f.pth",
     "other": "https://zenodo.org/api/files/1c8f83c5-33a5-4f59-b109-721fdd234875/other-b52fbbf7.pth",
@@ -108,7 +108,7 @@ def create_script(model_name, separator):
 def main():
     device = "cpu"
 
-    separator_umx = create_separator(get_umx_models(target_urls_umx), device=device)
+    separator_umxhq = create_separator(get_umx_models(target_urls_umxhq), device=device)
     separator_umxl = create_separator(
         get_umx_models(target_urls_umxl, hidden_size=1024), device=device
     )
@@ -116,7 +116,7 @@ def main():
     if not os.path.exists("dist"):
         os.mkdir("dist")
 
-    create_script("umx", separator_umx)
+    create_script("umxhq", separator_umxhq)
     create_script("umxl", separator_umxl)
 
 

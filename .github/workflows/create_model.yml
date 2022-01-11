@@ -37,8 +37,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`.
-          asset_path: ./dist/umx.ptl
-          asset_name: umx.ptl
+          asset_path: ./dist/umxhq.ptl
+          asset_name: umxhq.ptl
           asset_content_type: application/octet-stream
       - name: Upload umxl
         uses: actions/upload-release-asset@v1
