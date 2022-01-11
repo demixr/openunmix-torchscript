@@ -20,4 +20,4 @@ The output model will be `dist/umxl.plt`.
 
 ## Download the pytorch mobile model
 
-You can find in the [last release](https://github.com/demixr/openunmix-torchscript/releases) the `umxl.plt` model without launching anything.
+You can find in the [last release](https://github.com/demixr/openunmix-torchscript/releases/latest) the `umxl.plt` model without launching anything.
