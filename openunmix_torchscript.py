@@ -21,7 +21,21 @@ target_urls_umxl = {
 }
 
 
-def get_umx_models(target_urls, hidden_size=512, targets=None, device="cpu", pretrained=True):
+def get_umx_models(
+    target_urls, hidden_size=512, targets=None, device="cpu", pretrained=True
+):
+    """Download openunmix pretrained models
+
+    Args:
+        target_urls: dict with the link to download the model for bass, drums, other and vocals
+        hidden_size: size for bottleneck layer
+        targets: list of stems
+        device: the device on which the model will be used
+        pretrained: boolean for pretrained weights
+
+    Returns:
+        target_models: list with all the models
+    """
     if targets is None:
         targets = ["vocals", "drums", "bass", "other"]
 
@@ -32,7 +46,10 @@ def get_umx_models(target_urls, hidden_size=512, targets=None, device="cpu", pre
     for target in targets:
         # load open unmix model
         target_unmix = OpenUnmix(
-            nb_bins=4096 // 2 + 1, nb_channels=2, hidden_size=hidden_size, max_bin=max_bin
+            nb_bins=4096 // 2 + 1,
+            nb_channels=2,
+            hidden_size=hidden_size,
+            max_bin=max_bin,
         )
 
         # enable centering of stft to minimize reconstruction error
@@ -47,7 +64,17 @@ def get_umx_models(target_urls, hidden_size=512, targets=None, device="cpu", pre
         target_models[target] = target_unmix
     return target_models
 
-def create_separator(target_models, device='cpu'):
+
+def create_separator(target_models, device="cpu"):
+    """Create separator class which contains all models
+
+    Args:
+        target_models: list of all models
+        device: the device on which the model will be used
+
+    Returns:
+        separator: separator class which contains all models
+    """
     separator = (
         model.Separator(
             target_models=target_models,
@@ -65,22 +92,33 @@ def create_separator(target_models, device='cpu'):
 
     return separator
 
+
 def create_script(model_name, separator):
+    """Create the torchscript model from a separator
+
+    Args:
+        model_name: name of the torchscript file to create
+        separator: separator class which contains all models
+    """
     jit_script = torch.jit.script(separator)
     torchscript_model_opti = optimize_for_mobile(jit_script)
     torchscript_model_opti._save_for_lite_interpreter(f"dist/{model_name}.ptl")
+
 
 def main():
     device = "cpu"
 
     separator_umx = create_separator(get_umx_models(target_urls_umx), device=device)
-    separator_umxl = create_separator(get_umx_models(target_urls_umxl, hidden_size=1024), device=device)
+    separator_umxl = create_separator(
+        get_umx_models(target_urls_umxl, hidden_size=1024), device=device
+    )
 
     if not os.path.exists("dist"):
         os.mkdir("dist")
 
     create_script("umx", separator_umx)
     create_script("umxl", separator_umxl)
+
 
 if __name__ == "__main__":
     main()
