@@ -10,13 +10,13 @@ pip install -r requirements.txt
 
 ## Create the pytorch mobile model
 
-After installing all the dependencies, to create the model use:
+After installing all the dependencies, to create the models use:
 
 ```sh
 python umxl_torchscript.py
 ```
 
-The output model will be `dist/umxl.plt`.
+The output models will be `dist/umxl.plt` and `dist/umxhq.ptl`.
 
 ## Download the pytorch mobile model
 
