@@ -13,7 +13,7 @@ pip install -r requirements.txt
 After installing all the dependencies, to create the models use:
 
 ```sh
-python umxl_torchscript.py
+python openunmix_torchscript.py
 ```
 
 The output models will be `dist/umxl.plt` and `dist/umxhq.ptl`.

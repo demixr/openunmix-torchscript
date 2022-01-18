@@ -92,6 +92,11 @@ def create_separator(target_models, device="cpu"):
 
     return separator
 
+def quantize_model(model):
+    model.qconfig = torch.quantization.get_default_qconfig('qnnpack')
+    torch.quantization.prepare(model, inplace=True)
+
+    torch.quantization.convert(model, inplace=True)
 
 def create_script(model_name, separator):
     """Create the torchscript model from a separator
@@ -115,6 +120,9 @@ def main():
 
     if not os.path.exists("dist"):
         os.mkdir("dist")
+
+    quantize_model(separator_umxhq)
+    quantize_model(separator_umxl)
 
     create_script("umxhq", separator_umxhq)
     create_script("umxl", separator_umxl)
