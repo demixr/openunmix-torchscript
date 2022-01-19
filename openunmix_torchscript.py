@@ -1,4 +1,5 @@
 import torch
+import numpy as np
 import os
 from torch.utils.mobile_optimizer import optimize_for_mobile
 
@@ -19,7 +20,6 @@ target_urls_umxl = {
     "other": "https://zenodo.org/api/files/f8209c3e-ba60-48cf-8e79-71ae65beca61/other-c8c5b3e6.pth",
     "vocals": "https://zenodo.org/api/files/f8209c3e-ba60-48cf-8e79-71ae65beca61/vocals-bccbd9aa.pth",
 }
-
 
 def get_umx_models(
     target_urls, hidden_size=512, targets=None, device="cpu", pretrained=True
@@ -101,7 +101,7 @@ def create_script(model_name, separator):
         separator: separator class which contains all models
     """
     jit_script = torch.jit.script(separator)
-    torchscript_model_opti = optimize_for_mobile(jit_script)
+    torchscript_model_opti = optimize_for_mobile(jit_script, backend='vulkan')
     torchscript_model_opti._save_for_lite_interpreter(f"dist/{model_name}.ptl")
 
 
