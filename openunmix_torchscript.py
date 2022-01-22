@@ -1,5 +1,7 @@
-import torch
 import os
+import torch
+import torch.nn as nn
+import torch.quantization
 from torch.utils.mobile_optimizer import optimize_for_mobile
 
 from openunmix import utils
@@ -92,6 +94,17 @@ def create_separator(target_models, device="cpu"):
 
     return separator
 
+def quantize_model(model):
+    """Quantize model dynamically
+
+    Args:
+        model: model corresponding to the separator
+    """
+    model = torch.quantization.quantize_dynamic(
+        model, {nn.LSTM, nn.Linear}, dtype=torch.qint8
+    )
+
+    return model
 
 def create_script(model_name, separator):
     """Create the torchscript model from a separator
@@ -115,6 +128,9 @@ def main():
 
     if not os.path.exists("dist"):
         os.mkdir("dist")
+
+    separator_umxhq = quantize_model(separator_umxhq)
+    separator_umxl = quantize_model(separator_umxl)
 
     create_script("umxhq", separator_umxhq)
     create_script("umxl", separator_umxl)
