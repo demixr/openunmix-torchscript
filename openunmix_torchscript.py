@@ -94,21 +94,15 @@ def create_separator(target_models, device="cpu"):
 
     return separator
 
-def quantize_model(model, dynamic=True):
-    """Quantize model either statically or dynamically
+def quantize_model(model):
+    """Quantize model dynamically
 
     Args:
         model: model corresponding to the separator
-        dynamic: boolean to choose static or dynamic quantization
     """
-    if dynamic:
-        model = torch.quantization.quantize_dynamic(
-            model, {nn.LSTM, nn.Linear}, dtype=torch.qint8
-        )
-    else:
-        model.qconfig = torch.quantization.get_default_qconfig('qnnpack')
-        torch.quantization.prepare(model, inplace=True)
-        torch.quantization.convert(model, inplace=True)
+    model = torch.quantization.quantize_dynamic(
+        model, {nn.LSTM, nn.Linear}, dtype=torch.qint8
+    )
 
     return model
 
