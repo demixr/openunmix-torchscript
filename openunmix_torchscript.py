@@ -94,7 +94,7 @@ def create_separator(target_models, device="cpu"):
 
     return separator
 
-def quantize_model(model, dynamic=True):
+def quantize_model(model, dynamic=False):
     """Quantize model either statically or dynamically
 
     Args:
