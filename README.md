@@ -1,23 +1,64 @@
 # openunmix-torchscript
 
+Open-Unmix models for **mobile on-device inference** — TorchScript (`.ptl`) and ExecuTorch (`.pte`) export pipeline.
+
 ## Install dependencies
 
-To install all the dependencies you just have to run:
-
 ```sh
-pip install -r requirements.txt
+uv sync
 ```
 
-## Create the pytorch mobile model
-
-After installing all the dependencies, to create the models use:
+To also generate Executorch models:
 
 ```sh
-python openunmix_torchscript.py
+uv sync --extra executorch
 ```
 
-The output models will be `dist/umxl.plt` and `dist/umxhq.ptl`.
+## Create the PyTorch Mobile model
 
-## Download the pytorch mobile model
+```sh
+uv run python openunmix_executorch.py --umxhq --ptl
+uv run python openunmix_executorch.py --umxl --ptl
+```
 
-You can find in the [last release](https://github.com/demixr/openunmix-torchscript/releases/latest) the `umxl.plt` model without launching anything.
+Output: `dist/umxhq.ptl` (~140 MB) and `dist/umxl.ptl` (~290 MB).
+
+## Create the ExecuTorch model (`.pte`)
+
+```sh
+uv run python openunmix_executorch.py --umxhq --pte
+```
+
+> ⚠️ The original OpenUnmix model uses dynamic frame indexing that
+> `torch.export` cannot trace. See [NOTES.md](NOTES.md) for how to
+> modify the model for `.pte` export. The `.ptl` export works without
+> modification and is the recommended path for now.
+
+### Options
+
+```
+uv run python openunmix_executorch.py --all           # .ptl + .pte
+uv run python openunmix_executorch.py --ptl           # TorchScript only (default, works)
+uv run python openunmix_executorch.py --pte           # ExecuTorch (needs model modification)
+uv run python openunmix_executorch.py --umxhq         # Only umxhq model
+uv run python openunmix_executorch.py --umxl          # Only umxl model
+```
+
+## Download pre-converted models
+
+You can find the latest releases in the [GitHub releases](https://github.com/demixr/openunmix-torchscript/releases/latest).
+
+## Model formats comparison
+
+| Feature | `.ptl` (TorchScript) | `.pte` (ExecuTorch) |
+|---------|---------------------|---------------------|
+| Model modification | ❌ Not needed | ✅ Required (see NOTES.md) |
+| GPU acceleration | Limited | MPS (Metal), CoreML |
+| Quantization | 8-bit dynamic | 8-bit, 4-bit, dynamic |
+| Flutter plugin | None (custom) | `executorch_flutter` |
+| iOS simulator | ✅ | ❌ (device only) |
+| macOS Intel | ✅ | ❌ (Apple Silicon) |
+
+## License
+
+MIT — same as [Open-Unmix](https://github.com/sigsep/open-unmix-pytorch).
